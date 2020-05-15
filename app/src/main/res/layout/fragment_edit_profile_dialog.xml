@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditProfileDialog">
+
+    <RelativeLayout
+        android:id="@+id/constraintLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:id="@+id/select_from_camera"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_photo_camera_black_24dp"
+
+            />
+
+        <TextView
+            android:id="@+id/choose_from_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/select_from_camera"
+            android:gravity="center_vertical|start"
+
+            android:text="@string/choose_from_camera"
+            android:textSize="24sp"
+
+            />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/constraintLayout1"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:id="@+id/select_from_file"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_folder_black_24dp" />
+
+        <TextView
+            android:id="@+id/choose_from_file"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/select_from_file"
+            android:gravity="center_vertical|start"
+
+            android:text="@string/choose_from_file"
+            android:textSize="24sp"
+
+            />
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
