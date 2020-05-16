@@ -1,14 +1,9 @@
 package com.example.imagecompression
 
-import android.content.ContentResolver
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +21,6 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -74,9 +68,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 val mSelectedImageBitmap = bitmap
                 show_hide_Progressbar()
-                val compressed_Image = getCompressedImage_from_Bitmap(mSelectedImageBitmap!!, 100)
+                val bytes = BitmapUtility().getByteArrayFromBitmap(mSelectedImageBitmap, 100)
 
-                setImage(compressed_Image)
+                //val compressed_Image = BitmapUtility().getBitmapFromByteArray(bytes)  /*getCompressedImage_from_Bitmap(mSelectedImageBitmap!!, 100)*/
+
+                Glide.with(this)
+                    .load(bytes)
+                    .into(show_profile_image)
+
                 show_hide_Progressbar()
             })
 
@@ -184,7 +183,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (imageUri != null) {
 
             show_hide_Progressbar()
-            val result: Bitmap? = convertUriToBitmap(imageUri, contentResolver)
+            val result: Bitmap? = BitmapUtility().convertUriToBitmap(
+                imageUri,
+                contentResolver
+            )   /*convertUriToBitmap(imageUri, contentResolver)*/
 
             if (result != null) {
                 doingSomethinginMainThread(result, quality)
@@ -196,32 +198,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private suspend fun convertUriToBitmap(uri: Uri, contentResolver: ContentResolver): Bitmap =
-        withContext(IO) {
-
-            val mBitmap: Bitmap = if (Build.VERSION.SDK_INT < 28) {
-
-                MediaStore.Images.Media.getBitmap(contentResolver, uri)
-
-            } else {
-
-                ImageDecoder.decodeBitmap(
-                    ImageDecoder.createSource(
-                        contentResolver,
-                        uri
-                    )
-                )
-
-            }
-            return@withContext mBitmap
-        }
 
 
     private suspend fun doingSomethinginMainThread(bitmap: Bitmap, quality: Int) {
 
         withContext(Main) {
-            val imagebyteArray = getBytesFromBitmap(bitmap, quality)
-            val b_bitmap = BitmapFactory.decodeByteArray(imagebyteArray, 0, imagebyteArray!!.size)
+            val imagebyteArray = BitmapUtility().getByteArrayFromBitmap(
+                bitmap,
+                quality
+            )  /*getBytesFromBitmap(bitmap, quality)*/
+            val b_bitmap =
+                BitmapUtility().getBitmapFromByteArray(imagebyteArray)   /*BitmapFactory.decodeByteArray(imagebyteArray, 0, imagebyteArray!!.size)*/
 
             setImage(b_bitmap)
             show_hide_Progressbar()
@@ -229,17 +216,4 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    fun getCompressedImage_from_Bitmap(bitmap: Bitmap, quality: Int): Bitmap {
-
-        val bytes: ByteArray? = getBytesFromBitmap(bitmap, quality)
-        val b_bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes!!.size)
-
-        return b_bitmap
-    }
-
-    private fun getBytesFromBitmap(bitmap: Bitmap, quality: Int): ByteArray? {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
-        return stream.toByteArray()
-    }
 }
